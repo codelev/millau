@@ -1,0 +1,25 @@
+services:
+  replicated:
+    image: hashicorp/http-echo
+    deploy:
+      mode: replicated
+      replicas: 3
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=*"
+        - "millau.port=9000"
+    command: ["-listen=:9000", "-text=backend"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+  other:
+    image: hashicorp/http-echo
+    command: ["-listen=:9000", "-text=other"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+networks:
+  millau:
+    external: true

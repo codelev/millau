@@ -1,0 +1,48 @@
+services:
+  blue:
+    image: hashicorp/http-echo
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=company.com blue.local"
+        - "millau.port=9000"
+        - "millau.path=/api/"
+    command: ["-listen=:9000", "-text=blue"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+  green:
+    image: hashicorp/http-echo
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=company.com green.local"
+        - "millau.port=9000"
+        - "millau.path=/api/"
+    command: ["-listen=:9000", "-text=green"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+  red:
+    image: hashicorp/http-echo
+    deploy:
+      labels:
+        - "millau.enabled=false"
+        - "millau.hosts=company.com company.local"
+        - "millau.port=9000"
+        - "millau.path=/api/"
+    command: ["-listen=:9000", "-text=red"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+  other:
+    image: hashicorp/http-echo
+    command: ["-listen=:9000", "-text=other"]
+    ports:
+      - "9000"
+networks:
+  millau:
+    external: true

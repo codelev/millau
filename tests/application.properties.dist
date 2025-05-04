@@ -1,0 +1,11 @@
+# number of sequential requests in rest::get test
+rest.get.sequential=1
+
+# number of parallel requests in rest::get test
+rest.get.parallel=1
+
+# number of sequential requests in rest::post test
+rest.post.sequential=1
+
+# number of parallel requests in rest::post test
+rest.post.parallel=1

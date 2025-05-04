@@ -1,0 +1,34 @@
+services:
+  responding:
+    image: codelev/echo-spring:latest
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=*"
+        - "millau.port=9000"
+        - "millau.retry=10"
+        - "millau.timeout=2"
+    environment:
+      - DELAY=1
+    ports:
+      - "9000"
+    networks:
+      - millau
+  overloaded:
+    image: codelev/echo-spring:latest
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=*"
+        - "millau.port=9000"
+        - "millau.retry=10"
+        - "millau.timeout=2"
+    environment:
+      - DELAY=5
+    ports:
+      - "9000"
+    networks:
+      - millau
+networks:
+  millau:
+    external: true
