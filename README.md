@@ -92,6 +92,8 @@ curl -i -H 'Host: company.locall' localhost:8080
 # HTTP 502 No matching services found
 curl -i -H 'Host: company.local' localhost:8080/apii/
 # HTTP 502 No matching services found
+curl -k --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 -H 'Host: company.local' https://company.local:8443/api/
+# HTTP 200 blue or green
 docker stack rm bluegreen
 ```
 
@@ -119,5 +121,17 @@ docker stack rm failover
 docker compose up -d
 curl -i localhost:8080/rest/echo
 # HTTP 200
+curl -k --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 https://company.local:8443/rest/echo
+# HTTP 200
 docker compose down
+```
+
+### Self-Signed TLS Certificate
+
+```shell
+openssl genrsa -out company.local.key 2048
+openssl req -new -key company.local.key -out company.local.csr
+openssl x509 -req -days 365 -in company.local.csr -signkey company.local.key -out company.local.cert
+base64 -w 0 company.local.key > company.local.key.b64
+base64 -w 0 company.local.cert > company.local.cert.b64
 ```
