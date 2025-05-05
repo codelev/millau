@@ -1,6 +1,8 @@
 services:
   proxy:
     image: codelev/millau:latest
+    environment:
+      - LOGGING=DEBUG
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
@@ -12,9 +14,11 @@ services:
     labels:
       - "millau.enabled=true"
       - "millau.port=9000"
+      - "millau.path=/rest/"
     deploy:
       mode: replicated
       replicas: 2
       labels:
         - "millau.enabled=true"
         - "millau.port=9000"
+        - "millau.path=/rest/"

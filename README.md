@@ -8,18 +8,18 @@ Traditional proxies require configuration for each path and host, and must be re
 Millau
 - Listens to Docker events for zero restarts
 - Failover retries for guaranteed delivery
-- Written in Golang and available as a Docker image
+- Written in Golang and available as a slim Docker image
 
 ## Comparison
 
-| Product    | Configuration | Multi-service LB | Service discovery | Prometheus metrics | mTLS    |
-|------------|---------------|------------------|-------------------|--------------------|---------|
-| NGINX      | File          | Yes              | No                | No                 | Yes     |
-| HAProxy    | File          | Yes              | No                | Yes                | Yes     |
-| Envoy      | File          | Yes              | No                | Yes                | Yes     |
-| Caddy      | File          | Yes              | No                | Yes                | Yes     |
-| Traefik    | Labels        | No               | Yes               | Yes                | Yes     |
-| **Millau** | **Labels**    | **Yes**          | **Yes**           | **No**             | **Yes** |
+| Product    | Configuration | Multi-service LB | Service discovery | Prometheus metrics | mTLS    | Image size, MB |
+|------------|---------------|------------------|-------------------|--------------------|---------|----------------|
+| NGINX      | File          | Yes              | No                | No                 | Yes     | 192            |
+| HAProxy    | File          | Yes              | No                | Yes                | Yes     | 105            |
+| Envoy      | File          | Yes              | No                | Yes                | Yes     | 191            |
+| Caddy      | File          | Yes              | No                | Yes                | Yes     | 49             |
+| Traefik    | Labels        | No               | Yes               | Yes                | Yes     | 224            |
+| **Millau** | **Labels**    | **Yes**          | **Yes**           | **No**             | **Yes** | **27**         |
 
 ## Performance
 
@@ -135,3 +135,35 @@ openssl x509 -req -days 365 -in company.local.csr -signkey company.local.key -ou
 base64 -w 0 company.local.key > company.local.key.b64
 base64 -w 0 company.local.cert > company.local.cert.b64
 ```
+
+## Configuration
+
+### Logging Levels
+
+- **FATAL**: Indicates an unrecoverable error; the process will exit.
+- **ERROR**: Indicates a proxy failure; the process continues running.
+- **WARN**: Indicates client or microservice misbehavior; the process continues running.
+- **INFO**: Indicates normal functional behavior. Default level.
+- **DEBUG**: Indicates step‑by‑step functional behavior.
+
+ ```
+ services:
+   proxy:
+     image: codelev/millau:latest
+      environment:
+        - LOGGING=DEBUG
+      ...
+ ```
+
+### HTTP and HTTPS Ports
+By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as follows:
+
+ ```
+ services:
+   proxy:
+     image: codelev/millau:latest
+      environment:
+        - HTTP=8080
+        - HTTPS=8443
+      ...
+ ```

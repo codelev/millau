@@ -63,7 +63,8 @@ class WebSocketTest {
                 .withLabels(Map.of(
                         "com.docker.compose.service", APP_NAME,
                         "millau.enabled", "true",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/ws/"
                 ))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         appContainer.start();

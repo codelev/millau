@@ -57,7 +57,8 @@ class GuaranteedDeliveryOnFailedUpstreamTest {
                 .withLabels(Map.of(
                         "com.docker.compose.service", APP_A_NAME,
                         "millau.enabled", "true",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/rest/"
                 ))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         appAContainer.start();
@@ -69,7 +70,8 @@ class GuaranteedDeliveryOnFailedUpstreamTest {
                 .withLabels(Map.of(
                         "com.docker.compose.service", APP_B_NAME,
                         "millau.enabled", "true",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/rest/"
                 ))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         appBContainer.start();

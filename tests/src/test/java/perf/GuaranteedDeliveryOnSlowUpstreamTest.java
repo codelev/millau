@@ -58,7 +58,8 @@ class GuaranteedDeliveryOnSlowUpstreamTest {
                         "com.docker.compose.service", APP_A_NAME,
                         "millau.enabled", "true",
                         "millau.timeout", "2",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/rest/"
                 ))
                 .withEnv("DELAY", "1")
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
@@ -72,7 +73,8 @@ class GuaranteedDeliveryOnSlowUpstreamTest {
                         "com.docker.compose.service", APP_B_NAME,
                         "millau.enabled", "true",
                         "millau.timeout", "2",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/rest/"
                 ))
                 .withEnv("DELAY", "3")
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));

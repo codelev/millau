@@ -55,7 +55,8 @@ class RestTest {
                 .withLabels(Map.of(
                         "com.docker.compose.service", APP_NAME,
                         "millau.enabled", "true",
-                        "millau.port", "" + APP_PORT
+                        "millau.port", "" + APP_PORT,
+                        "millau.path", "/rest/"
                 ))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         appAContainer.start();
