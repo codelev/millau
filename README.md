@@ -170,9 +170,9 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
 
 ### HTTP Path Matching
 The matching logic selects the services whose `millau.path` label matches the beginning of the request path. It prioritizes:
-- exact or longest prefix matches,
-- specific path rules (e.g., a service for `millau.path:/file.html` matches only that exact file,
-- handling of trailing slashes and partial matches.
+1. Specific path rules matches only that exact file.
+2. Exact or longest prefix matches.
+3. Handling of trailing slashes and partial matches.
 
 | Configured services              | HTTP Path          | Selected services |
 |----------------------------------|--------------------|-------------------|
@@ -200,3 +200,16 @@ Adding a license key to your Millau instance removes debugging information from 
         - LICENSE=my-license-key
       ...
  ```
+
+## Support
+The license key also gives you access to support. Feel free to send a message or schedule a call at https://millau.net/support.
+
+Please note that Millau is a non-commercial project, so constant availability isn't guaranteed. However, you're always welcome to report issues on GitHub https://github.com/codelev/millau/issues.
+
+## Contributing
+There are three ways you can support Millau:
+1. Use Millau in your stack.
+2. Sponsor at https://www.patreon.com/c/millau
+3. Star this GitHub repository.
+
+Every user, issued license, and star helps attract the attention of potential investors. The final goal is to raise €20,000 to establish Millau as the standard ingress proxy for Docker Swarm and release it under an open-source license.
