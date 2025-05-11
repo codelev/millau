@@ -167,3 +167,36 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
         - HTTPS=8443
       ...
  ```
+
+### HTTP Path Matching
+The matching logic selects the services whose `millau.path` label matches the beginning of the request path. It prioritizes:
+- exact or longest prefix matches,
+- specific path rules (e.g., a service for `millau.path:/file.html` matches only that exact file,
+- handling of trailing slashes and partial matches.
+
+| Configured services              | HTTP Path          | Selected services |
+|----------------------------------|--------------------|-------------------|
+| `/api/` `/`                      | `/api/`            | `/api/`           |
+| `/api/` `/`                      | `/api`             | `/`               |
+| `/api/` `/`                      | `/file.html`       | `/`               |
+| `/api/` `/`                      | `/api/`            | `/api/`           |
+| `/api/` `/`                      | `/api/x`           | `/api/`           |
+| `/api/` `/`                      | `/api/x/`          | `/api/`           |
+| `/api/` `/`                      | `/api/x/file.html` | `/api/`           |
+| `/api/` `/` `/file.html`         | `/file.html`       | `/file.html`      |
+| `/file` `/api/` `/` `/file`      | `/file.html`       | `/file` `/file`   |
+| `/api/` `/` `/file` `/file.html` | `/file.html`       | `/file.html`      |
+| `/api/` `/` `/api/`              | `/api/`            | `/api/` `/api/`   |
+
+
+### Free Commercial License
+Adding a license key to your Millau instance removes debugging information from HTTP traffic. You can get the license free of charge in a minute at https://millau.net/license and add it as follows:
+
+ ```
+ services:
+   proxy:
+     image: codelev/millau:latest
+      environment:
+        - LICENSE=my-license-key
+      ...
+ ```

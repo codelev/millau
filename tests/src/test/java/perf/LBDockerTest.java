@@ -51,6 +51,9 @@ class LBDockerTest {
         for (int i = 0; i < requests; i++) {
             ResponseEntity<String> response = client.exchange(url(), HttpMethod.GET, null, String.class);
             assertEquals(200, response.getStatusCode().value());
+            assertNotNull(response.getHeaders().get("Via"));
+            assertNotNull(response.getHeaders().get("X-Backend-Server"));
+            assertNotNull(response.getHeaders().get("X-Served-By"));
             assertNotNull(response.getBody());
             stats.compute(getInstanceId(response.getBody()), (k, v) -> v == null ? 1 : v + 1);
         }
@@ -75,7 +78,7 @@ class LBDockerTest {
         pb.inheritIO();
         Process p = pb.start();
         p.waitFor();
-        Thread.sleep(7_000);
+        Thread.sleep(10_000);
     }
 
     private void removeStack() throws Exception {
