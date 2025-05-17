@@ -1,12 +1,14 @@
 package perf;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
@@ -21,8 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,7 +33,6 @@ class RestTest {
 
     static final String APP_NAME = "app";
     static final int APP_PORT = 9000;
-    static final String APP_ENDPOINT = "/rest/echo";
 
     // proxy
     static final int PROXY_PORT = 8080;
@@ -42,8 +42,8 @@ class RestTest {
     private GenericContainer<?> proxyContainer;
     private static final Network NETWORK = Network.newNetwork();
 
-    String url() {
-        return String.format("http://%s:%d%s", proxyContainer.getHost(), proxyContainer.getMappedPort(PROXY_PORT), APP_ENDPOINT);
+    String url(String path) {
+        return String.format("http://%s:%d%s", proxyContainer.getHost(), proxyContainer.getMappedPort(PROXY_PORT), path);
     }
 
     @BeforeAll
@@ -65,6 +65,7 @@ class RestTest {
                 .withExposedPorts(PROXY_PORT)
                 .withNetwork(NETWORK)
                 .withEnv("HTTP", ":" + PROXY_PORT)
+                .withEnv("LOGGING", "DEBUG")
                 .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         proxyContainer.start();
@@ -94,7 +95,7 @@ class RestTest {
         ConcurrentHashMap<String, Integer> stats = new ConcurrentHashMap<>(2);
         RestTemplate client = new RestTemplate();
         for (int i = 0; i < requests; i++) {
-            ResponseEntity<String> response = client.exchange(url(), HttpMethod.GET, null, String.class);
+            ResponseEntity<String> response = client.exchange(url("/rest/echo"), HttpMethod.GET, null, String.class);
             assertEquals(200, response.getStatusCode().value());
             assertNotNull(response.getBody());
             stats.compute(getInstanceId(response.getBody()), (k, v) -> v == null ? 1 : v + 1);
@@ -103,6 +104,25 @@ class RestTest {
         int responses = stats.values().stream().mapToInt(Integer::intValue).sum();
         assertEquals(requests, responses);
         assertEquals(1, stats.size()); // 1 responding upstream
+    }
+
+    @Test
+    void http404() {
+        RestTemplate client = new RestTemplate();
+        client.setErrorHandler(new ResponseErrorHandler() {
+            @Override
+            public boolean hasError(@NotNull ClientHttpResponse response) {
+                return false;
+            }
+            @Override
+            public void handleError(@NotNull ClientHttpResponse response) {
+            }
+        });
+        ResponseEntity<String> response = client.exchange(url("/rest/none"), HttpMethod.GET, null, String.class);
+        assertEquals(404, response.getStatusCode().value());
+        // service is not disabled
+        response = client.exchange(url("/rest/none"), HttpMethod.GET, null, String.class);
+        assertEquals(404, response.getStatusCode().value());
     }
 
     private String getInstanceId(String responseBody) {

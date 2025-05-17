@@ -80,6 +80,7 @@ class GuaranteedDeliveryOnFailedUpstreamTest {
                 .withExposedPorts(PROXY_PORT)
                 .withNetwork(NETWORK)
                 .withEnv("HTTP", ":" + PROXY_PORT)
+                .withEnv("LOGGING", "DEBUG")
                 .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         proxyContainer.start();

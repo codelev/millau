@@ -79,6 +79,7 @@ class MTLSTest {
                 .withExposedPorts(PROXY_PORT)
                 .withNetwork(NETWORK)
                 .withEnv("HTTPS", ":" + PROXY_PORT)
+                .withEnv("LOGGING", "DEBUG")
                 .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_ONLY)
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(5)));
         proxyContainer.start();
