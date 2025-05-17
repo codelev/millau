@@ -94,6 +94,8 @@ curl -i -H 'Host: company.local' localhost:8080/apii/
 # HTTP 502 No matching services found
 curl -k --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 -H 'Host: company.local' https://company.local:8443/api/
 # HTTP 200 blue or green
+curl -k --http2 --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 -H 'Host: company.local' https://company.local:8443/api/
+# HTTP 200 blue or green
 docker stack rm bluegreen
 ```
 
@@ -122,6 +124,7 @@ docker compose up -d
 curl -i localhost:8080/rest/echo
 # HTTP 200
 curl -k --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 https://company.local:8443/rest/echo
+curl -k --http2 --resolve company.local:8443:127.0.0.1 --connect-to company.local:8443 https://company.local:8443/rest/echo
 # HTTP 200
 docker compose down
 ```
@@ -179,7 +182,6 @@ The matching logic selects the services whose `millau.path` label matches the be
 | `/api/` `/`                      | `/api/`            | `/api/`           |
 | `/api/` `/`                      | `/api`             | `/`               |
 | `/api/` `/`                      | `/file.html`       | `/`               |
-| `/api/` `/`                      | `/api/`            | `/api/`           |
 | `/api/` `/`                      | `/api/x`           | `/api/`           |
 | `/api/` `/`                      | `/api/x/`          | `/api/`           |
 | `/api/` `/`                      | `/api/x/file.html` | `/api/`           |
