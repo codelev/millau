@@ -7,6 +7,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - "8080:80"
+    deploy:
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
   echo:
     image: codelev/echo-spring
     ports:
@@ -22,3 +27,13 @@ services:
         - "millau.enabled=true"
         - "millau.port=9000"
         - "millau.path=/rest/"
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/rest/echo" ]
+      interval: 2s
+      timeout: 1s
+      retries: 1
+      start_period: 2s

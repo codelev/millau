@@ -19,7 +19,7 @@ Millau
 | Envoy      | File          | Yes              | No                | Yes                | Yes     | 191            |
 | Caddy      | File          | Yes              | No                | Yes                | Yes     | 49             |
 | Traefik    | Labels        | No               | Yes               | Yes                | Yes     | 224            |
-| **Millau** | **Labels**    | **Yes**          | **Yes**           | **No**             | **Yes** | **27**         |
+| **Millau** | **Labels**    | **Yes**          | **Yes**           | **No**             | **Yes** | **32**         |
 
 ## Performance
 
@@ -84,6 +84,8 @@ Millau
 docker stack deploy -c docker-compose.bluegreen.yml bluegreen
 curl -i -H 'Host: company.com' localhost:8080/api/
 # HTTP 200 blue or green
+curl -i -H 'Host: www.company.com' localhost:8080/api/
+# HTTP 200 blue or green
 curl -i -H 'Host: green.local' localhost:8080/api/
 # HTTP 200 green
 curl -i -H 'Host: blue.local' localhost:8080/api/
@@ -129,6 +131,36 @@ curl -k --http2 --resolve company.local:8443:127.0.0.1 --connect-to company.loca
 docker compose down
 ```
 
+### Telemetry
+Millau exposes the following endpoints on port `9100`:
+- Healthcheck `/`:
+    - responds `up` and `200 OK` when healthy,
+    - responds `down` and `503 Service Unavailable` when unhealthy.
+- Prometheus metrics `/metrics`:
+
+| Metric                                 | Description                                              |
+|----------------------------------------|----------------------------------------------------------|
+| **Ingress**                            |                                                          |
+| `millau_ingress_open_connections`      | The current count of open connections by port.           |
+| `millau_ingress_requests_total`        | The total count of requests received by port.            |
+| `millau_ingress_requests_bytes_total`  | The total size of requests in bytes handled by port.     |
+| `millau_ingress_responses_bytes_total` | The total size of responses in bytes handled by port.    |
+| **Load Balancer**                      |                                                          |
+| `millau_lb_successful_requests_total`  | The total count of requests handled by service.          |
+| `millau_lb_failed_requests_total`      | The total count of requests not handled by service.      |
+| `millau_lb_requests_bytes_total`       | The total size of requests in bytes handled by service.  |
+| `millau_lb_responses_bytes_total`      | The total size of responses in bytes handled by service. |
+| `millau_lb_retries_total`              | The count of retries made for service.                   |
+| `millau_lb_status`                     | Current service status, `0` for `down` or `1` for `up`.  |
+| `millau_lb_request_duration_seconds`   | Request handling histogram by service.                   |
+
+Millau has an official [Grafana dashboard](https://grafana.com/grafana/dashboards/23474-millau-ingress-proxy-and-load-balancer/).
+You can try it out locally using the `docker-compose.yml`, which sets up Millau, Echo service, Prometheus and Grafana together.
+
+Once the stack is running, log in Grafana at http://localhost:3000 with username `admin` and password `admin`.
+The [millau.json](https://github.com/codelev/millau/tree/main/grafana/dashboards/millau.json) is already installed and ready to use.
+
+
 ### Self-Signed TLS Certificate
 
 ```shell
@@ -171,24 +203,41 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
       ...
  ```
 
-### HTTP Path Matching
-The matching logic selects the services whose `millau.path` label matches the beginning of the request path. It prioritizes:
-1. Specific path rules matches only that exact file.
-2. Exact or longest prefix matches.
-3. Handling of trailing slashes and partial matches.
+### HTTP Host Matching
+The matching logic selects the services whose `millau.hosts` label matches the domain hierarchy.
+It prioritizes:
+- exact matches,
+- longest suffix.
 
-| Configured services              | HTTP Path          | Selected services |
-|----------------------------------|--------------------|-------------------|
-| `/api/` `/`                      | `/api/`            | `/api/`           |
-| `/api/` `/`                      | `/api`             | `/`               |
-| `/api/` `/`                      | `/file.html`       | `/`               |
-| `/api/` `/`                      | `/api/x`           | `/api/`           |
-| `/api/` `/`                      | `/api/x/`          | `/api/`           |
-| `/api/` `/`                      | `/api/x/file.html` | `/api/`           |
-| `/api/` `/` `/file.html`         | `/file.html`       | `/file.html`      |
-| `/file` `/api/` `/` `/file`      | `/file.html`       | `/file` `/file`   |
-| `/api/` `/` `/file` `/file.html` | `/file.html`       | `/file.html`      |
-| `/api/` `/` `/api/`              | `/api/`            | `/api/` `/api/`   |
+| Configured          | Requested       | Selected  |
+|---------------------|-----------------|-----------|
+| `one.com` `two.com` | `one.com`       | `one.com` |
+| `one.com` `two.com` | `www.two.com`   | `two.com` |
+| `one.com` `two.com` | `three.two.com` | `two.com` |
+| `one.com` `local`   | `blue.local`    | `local`   |
+| `*` `two.com`       | `two.com`       | `two.com` |
+| `*` `two.com`       | `one.com`       | `*`       |
+| `*` `*`             | `one.com`       | `*` `*`   |
+
+
+### HTTP Path Matching
+The matching logic selects the services whose `millau.path` label matches the beginning of the request path. 
+It prioritizes:
+- exact matches,
+- longest prefix.
+
+| Configured                       | Requested          | Selected        |
+|----------------------------------|--------------------|-----------------|
+| `/api/` `/`                      | `/api/`            | `/api/`         |
+| `/api/` `/`                      | `/api`             | `/`             |
+| `/api/` `/`                      | `/file.html`       | `/`             |
+| `/api/` `/`                      | `/api/x`           | `/api/`         |
+| `/api/` `/`                      | `/api/x/`          | `/api/`         |
+| `/api/` `/`                      | `/api/x/file.html` | `/api/`         |
+| `/api/` `/` `/file.html`         | `/file.html`       | `/file.html`    |
+| `/file` `/api/` `/` `/file`      | `/file.html`       | `/file` `/file` |
+| `/api/` `/` `/file` `/file.html` | `/file.html`       | `/file.html`    |
+| `/api/` `/` `/api/`              | `/api/`            | `/api/` `/api/` |
 
 
 ### Free Commercial License
