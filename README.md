@@ -158,7 +158,7 @@ Millau has an official [Grafana dashboard](https://grafana.com/grafana/dashboard
 You can try it out locally using the `docker-compose.yml`, which sets up Millau, Echo service, Prometheus and Grafana together.
 
 Once the stack is running, log in Grafana at http://localhost:3000 with username `admin` and password `admin`.
-The [millau.json](https://github.com/codelev/millau/tree/main/grafana/dashboards/millau.json) is already installed and ready to use.
+The [millau.json](https://github.com/codelev/millau/tree/main/pg/millau.json) is already installed and ready to use.
 
 
 ### Self-Signed TLS Certificate
