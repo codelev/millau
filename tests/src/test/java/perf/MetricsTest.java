@@ -88,7 +88,7 @@ class MetricsTest {
     }
 
     String proxyImage() {
-        return "codelev/millau:latest";
+        return "codelev/millau:test";
     }
 
     String appImage() {
@@ -129,7 +129,12 @@ class MetricsTest {
                 "millau_lb_requests_bytes_total{method=\"GET\",service=\"app\"} 0",
                 "millau_lb_responses_bytes_total{method=\"GET\",service=\"app\"} 306",
                 "millau_lb_status{service=\"app\"} 1",
-                "millau_lb_successful_requests_total{code=\"200\",method=\"GET\",service=\"app\"} 1"
+                "millau_lb_successful_requests_total{code=\"200\",method=\"GET\",service=\"app\"} 1",
+                
+                "millau_topology_status{id=\":443\",mainstat=\"up\",title=\":443\"} 1",
+                "millau_topology_status{id=\":8080\",mainstat=\"up\",title=\":8080\"} 1",
+                "millau_topology_status{id=\"app\",mainstat=\"up\",title=\"app\"} 1",
+                "millau_topology_requests_total{id=\":8080-app\",source=\":8080\",target=\"app\"} 1"
         ));
         assertHealthcheck();
 
@@ -149,7 +154,12 @@ class MetricsTest {
                 "millau_lb_responses_bytes_total{method=\"GET\",service=\"app\"} 404",
                 "millau_lb_status{service=\"app\"} 1",
                 "millau_lb_successful_requests_total{code=\"200\",method=\"GET\",service=\"app\"} 1",
-                "millau_lb_successful_requests_total{code=\"404\",method=\"GET\",service=\"app\"} 1"
+                "millau_lb_successful_requests_total{code=\"404\",method=\"GET\",service=\"app\"} 1",
+
+                "millau_topology_status{id=\":443\",mainstat=\"up\",title=\":443\"} 1",
+                "millau_topology_status{id=\":8080\",mainstat=\"up\",title=\":8080\"} 1",
+                "millau_topology_status{id=\"app\",mainstat=\"up\",title=\"app\"} 1",
+                "millau_topology_requests_total{id=\":8080-app\",source=\":8080\",target=\"app\"} 2"
         ));
         assertHealthcheck();
 
@@ -171,7 +181,12 @@ class MetricsTest {
                 "millau_lb_status{service=\"app\"} 0",
                 "millau_lb_successful_requests_total{code=\"200\",method=\"GET\",service=\"app\"} 1",
                 "millau_lb_successful_requests_total{code=\"404\",method=\"GET\",service=\"app\"} 1",
-                "millau_lb_failed_requests_total{method=\"GET\",service=\"app\"} 1"
+                "millau_lb_failed_requests_total{method=\"GET\",service=\"app\"} 1",
+
+                "millau_topology_status{id=\":443\",mainstat=\"up\",title=\":443\"} 1",
+                "millau_topology_status{id=\":8080\",mainstat=\"up\",title=\":8080\"} 1",
+                "millau_topology_status{id=\"app\",mainstat=\"up\",title=\"app\"} 1",
+                "millau_topology_requests_total{id=\":8080-app\",source=\":8080\",target=\"app\"} 3"
         ));
         assertHealthcheck();
     }

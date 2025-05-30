@@ -82,7 +82,7 @@ class RestTest {
     }
 
     String proxyImage() {
-        return "codelev/millau:latest";
+        return "codelev/millau:test";
     }
 
     String appImage() {

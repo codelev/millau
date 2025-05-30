@@ -1,6 +1,6 @@
 services:
   proxy:
-    image: codelev/millau:latest
+    image: codelev/millau:test
     environment:
       - LOGGING=DEBUG
     volumes:
@@ -13,7 +13,7 @@ services:
         order: start-first
         failure_action: rollback
   echo:
-    image: codelev/echo-spring
+    image: codelev/echo-spring:latest
     ports:
       - "9000"
     labels:

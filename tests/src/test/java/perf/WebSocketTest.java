@@ -43,7 +43,7 @@ class WebSocketTest {
     private static final Network NETWORK = Network.newNetwork();
 
     String proxyImage() {
-        return "codelev/millau:latest";
+        return "codelev/millau:test";
     }
 
     String appImage() {

@@ -119,6 +119,21 @@ curl localhost:8080/rest/echo
 docker stack rm failover
 ```
 
+### Maintenance Mode
+
+```shell
+docker stack deploy -c docker-compose.spa.yml spa
+curl -H 'Host: company.com' localhost:8080
+# homepage
+docker service rm spa_homepage
+curl -H 'Host: company.com' localhost:8080
+# maintenance page
+docker stack deploy -c docker-compose.spa.yml spa
+curl -H 'Host: company.com' localhost:8080
+# homepage
+docker stack rm spa
+```
+
 ### Docker Compose
 
 ```shell
@@ -153,6 +168,7 @@ Millau exposes the following endpoints on port `9100`:
 | `millau_lb_retries_total`              | The count of retries made for service.                   |
 | `millau_lb_status`                     | Current service status, `0` for `down` or `1` for `up`.  |
 | `millau_lb_request_duration_seconds`   | Request handling histogram by service.                   |
+| `millau_topology`                      | Requests routed to services.                             |
 
 Millau has an official [Grafana dashboard](https://grafana.com/grafana/dashboards/23474-millau-ingress-proxy-and-load-balancer/).
 You can try it out locally using the `docker-compose.yml`, which sets up Millau, Echo service, Prometheus and Grafana together.

@@ -1,0 +1,27 @@
+services:
+  homepage:
+    image: hashicorp/http-echo
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.hosts=company.com"
+        - "millau.port=9000"
+    command: ["-listen=:9000", "-text=homepage"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+  fallback:
+    image: hashicorp/http-echo
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.port=9000"
+    command: ["-listen=:9000", "-text=maintenance page"]
+    ports:
+      - "9000"
+    networks:
+      - millau
+networks:
+  millau:
+    external: true

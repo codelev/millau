@@ -146,8 +146,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 7,
-        "x": 5,
+        "w": 6,
+        "x": 6,
         "y": 1
       },
       "id": 20,
@@ -183,6 +183,65 @@
       ],
       "title": "Open connections",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 41,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "millau_topology_status",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "nodes"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "millau_topology_requests_total",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "edges"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "nodeGraph",
+      "title": "Topology"
     },
     {
       "datasource": {
@@ -244,8 +303,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 1
+        "x": 0,
+        "y": 17
       },
       "id": 30,
       "options": {
@@ -306,7 +365,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 5,
+        "w": 6,
         "x": 0,
         "y": 3
       },
@@ -1497,6 +1556,6 @@
   "timezone": "",
   "title": "Millau ingress proxy and load balancer",
   "uid": "millau",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
