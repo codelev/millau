@@ -125,10 +125,10 @@ docker stack rm failover
 docker stack deploy -c docker-compose.spa.yml spa
 curl -H 'Host: company.com' localhost:8080
 # homepage
-docker service rm spa_homepage
+docker service scale spa_homepage=0
 curl -H 'Host: company.com' localhost:8080
 # maintenance page
-docker stack deploy -c docker-compose.spa.yml spa
+docker service scale spa_homepage=1
 curl -H 'Host: company.com' localhost:8080
 # homepage
 docker stack rm spa
