@@ -1,0 +1,40 @@
+services:
+  proxy:
+    image: codelev/millau:test
+    environment:
+      - LOGGING=DEBUG
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "8080:80"
+    deploy:
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+  main:
+    image: hashicorp/http-echo
+    command: ["-listen=:9000", "-text=main"]
+    ports:
+      - "9000"
+    labels:
+      - "millau.enabled=true"
+      - "millau.port=9000"
+      - "millau.hosts=localhost"
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.port=9000"
+        - "millau.hosts=localhost"
+  fallback:
+    image: hashicorp/http-echo
+    command: ["-listen=:9000", "-text=fallback"]
+    ports:
+      - "9000"
+    labels:
+      - "millau.enabled=true"
+      - "millau.port=9000"
+    deploy:
+      labels:
+        - "millau.enabled=true"
+        - "millau.port=9000"
