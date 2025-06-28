@@ -12,14 +12,14 @@ Millau
 
 ## Comparison
 
-| Product    | Configuration | Multi-service LB | Service discovery | Prometheus metrics | mTLS    | Image size, MB |
-|------------|---------------|------------------|-------------------|--------------------|---------|----------------|
-| NGINX      | File          | Yes              | No                | No                 | Yes     | 192            |
-| HAProxy    | File          | Yes              | No                | Yes                | Yes     | 105            |
-| Envoy      | File          | Yes              | No                | Yes                | Yes     | 191            |
-| Caddy      | File          | Yes              | No                | Yes                | Yes     | 49             |
-| Traefik    | Labels        | No               | Yes               | Yes                | Yes     | 224            |
-| **Millau** | **Labels**    | **Yes**          | **Yes**           | **Yes**            | **Yes** | **32**         |
+| Product    | Configuration | Multi-service LB | Service discovery | Prometheus metrics | Automatic HTTPS | mTLS    | Image size, MB |
+|------------|---------------|------------------|-------------------|--------------------|-----------------|---------|----------------|
+| NGINX      | File          | Yes              | No                | No                 | No              | Yes     | 192            |
+| HAProxy    | File          | Yes              | No                | Yes                | No              | Yes     | 105            |
+| Envoy      | File          | Yes              | No                | Yes                | No              | Yes     | 191            |
+| Caddy      | File          | Yes              | No                | Yes                | Yes             | Yes     | 49             |
+| Traefik    | Labels        | No               | Yes               | Yes                | Yes             | Yes     | 224            |
+| **Millau** | **Labels**    | **Yes**          | **Yes**           | **Yes**            | **Yes**         | **Yes** | **33**         |
 
 ## Performance
 
@@ -216,6 +216,19 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
       environment:
         - HTTP=8080
         - HTTPS=8443
+      ...
+ ```
+
+## Automatic HTTPS
+By default, ACME API is `https://api.buypass.com/acme/directory` (Buypass AS Certificate Authority, Norway). 
+You can change is as follows:
+
+ ```
+ services:
+   proxy:
+     image: codelev/millau:latest
+      environment:
+        - ACME=https://acme-v02.api.letsencrypt.org/directory
       ...
  ```
 
