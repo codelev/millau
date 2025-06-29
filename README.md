@@ -146,7 +146,8 @@ curl -k --http2 --resolve company.local:8443:127.0.0.1 --connect-to company.loca
 docker compose down
 ```
 
-### Telemetry
+## Telemetry
+
 Millau exposes the following endpoints on port `9100`:
 - Healthcheck `/`:
     - responds `up` and `200 OK` when healthy,
@@ -173,19 +174,12 @@ Millau exposes the following endpoints on port `9100`:
 Millau has an official [Grafana dashboard](https://grafana.com/grafana/dashboards/23474-millau-ingress-proxy-and-load-balancer/).
 You can try it out locally using the `docker-compose.yml`, which sets up Millau, Echo service, Prometheus and Grafana together.
 
+![Grafana](grafana-a.png)
+![Grafana](grafana-b.png)
+![Grafana](grafana-c.png)
+
 Once the stack is running, log in Grafana at http://localhost:3000 with username `admin` and password `admin`.
 The [millau.json](https://github.com/codelev/millau/tree/main/pg/millau.json) is already installed and ready to use.
-
-
-### Self-Signed TLS Certificate
-
-```shell
-openssl genrsa -out company.local.key 2048
-openssl req -new -key company.local.key -out company.local.csr
-openssl x509 -req -days 365 -in company.local.csr -signkey company.local.key -out company.local.cert
-base64 -w 0 company.local.key > company.local.key.b64
-base64 -w 0 company.local.cert > company.local.cert.b64
-```
 
 ## Configuration
 
@@ -219,7 +213,7 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
       ...
  ```
 
-## Automatic HTTPS
+### Automatic HTTPS
 By default, ACME API is `https://api.buypass.com/acme/directory` (Buypass AS Certificate Authority, Norway). 
 You can change is as follows:
 
@@ -268,6 +262,17 @@ It prioritizes:
 | `/api/` `/` `/file` `/file.html` | `/file.html`       | `/file.html`    |
 | `/api/` `/` `/api/`              | `/api/`            | `/api/` `/api/` |
 
+
+### Self-Signed TLS Certificate
+Generates a base64-encoded certificate and private key:
+
+```shell
+openssl genrsa -out company.local.key 2048
+openssl req -new -key company.local.key -out company.local.csr
+openssl x509 -req -days 365 -in company.local.csr -signkey company.local.key -out company.local.cert
+base64 -w 0 company.local.key > company.local.key.b64
+base64 -w 0 company.local.cert > company.local.cert.b64
+```
 
 ### Free Commercial License
 Adding a license key to your Millau instance removes debugging information from HTTP traffic. You can get the license free of charge in a minute at https://millau.net/license and add it as follows:
