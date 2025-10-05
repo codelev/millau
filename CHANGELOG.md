@@ -3,6 +3,12 @@ title: Changelog
 description: Notable changes to the project.
 ---
 
+## 0.0.8
+2025-10-05
+
+**Added**
+- Improved descriptions of Prometheus metrics.
+
 ## 0.0.7
 2025-06-28
 
