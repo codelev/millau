@@ -12,7 +12,7 @@ class PerfEchoNestTest extends PerfTest {
 
     @Override
     String appImage() {
-        return "echo-nest";
+        return "codelev/echo-nest:latest";
     }
 
     @Override

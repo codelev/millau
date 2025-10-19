@@ -137,6 +137,7 @@ abstract class PerfTest {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("cf-connecting-ip", "100.100.100.100");
+        headers.set("TE", "gzip, trailers");
         ResponseEntity<String> response = CLIENT.exchange(url(), HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
         assertNotNull(response.getBody());
@@ -145,6 +146,7 @@ abstract class PerfTest {
         assertTrue(response.getBody().contains(String.format("x-forwarded-for: %s%n", ip)), response.getBody());
         assertTrue(response.getBody().contains("x-forwarded-proto: http\n"), response.getBody());
         assertTrue(response.getBody().contains("cf-connecting-ip: 100.100.100.100\n"), response.getBody());
+        assertTrue(response.getBody().contains("te: trailers\n"), response.getBody());
     }
 
     @Test
