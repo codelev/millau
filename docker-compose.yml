@@ -24,7 +24,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./pg/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
   grafana:
@@ -32,8 +32,8 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./pg/millau.json:/var/lib/grafana/dashboards/millau.json
-      - ./pg/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
-      - ./pg/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./monitoring/millau.json:/var/lib/grafana/dashboards/millau.json
+      - ./monitoring/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin

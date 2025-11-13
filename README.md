@@ -39,7 +39,7 @@ Millau
 ## Quickstart
 
 1. Create `docker-compose.proxy.yml`:
-    ```
+    ```dockerfile
     services:
       proxy:
         image: codelev/millau:latest
@@ -54,7 +54,7 @@ Millau
         external: true
     ```
 2. Create `docker-compose.service.yml`:
-    ```
+    ```dockerfile
     services:
       whoami:
         image: traefik/whoami
@@ -179,7 +179,7 @@ You can try it out locally using the `docker-compose.yml`, which sets up Millau,
 ![Grafana](grafana-c.png)
 
 Once the stack is running, log in Grafana at http://localhost:3000 with username `admin` and password `admin`.
-The [millau.json](https://github.com/codelev/millau/tree/main/pg/millau.json) is already installed and ready to use.
+The [millau.json](https://github.com/codelev/millau/tree/main/monitoring/millau.json) is already installed and ready to use.
 
 ## Configuration
 
@@ -191,7 +191,7 @@ The [millau.json](https://github.com/codelev/millau/tree/main/pg/millau.json) is
 - **INFO**: Indicates normal functional behavior. Default level.
 - **DEBUG**: Indicates step‑by‑step functional behavior.
 
- ```
+ ```dockerfile
  services:
    proxy:
      image: codelev/millau:latest
@@ -203,7 +203,7 @@ The [millau.json](https://github.com/codelev/millau/tree/main/pg/millau.json) is
 ### HTTP and HTTPS Ports
 By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as follows:
 
- ```
+ ```dockerfile
  services:
    proxy:
      image: codelev/millau:latest
@@ -217,7 +217,7 @@ By default, the HTTP and HTTPS ports are `80` and `443`. You can change them as 
 By default, ACME API is `https://api.buypass.com/acme/directory` (Buypass AS Certificate Authority, Norway). 
 You can change is as follows:
 
- ```
+ ```dockerfile
  services:
    proxy:
      image: codelev/millau:latest
@@ -277,7 +277,7 @@ base64 -w 0 company.local.cert > company.local.cert.b64
 ### Free Commercial License
 Adding a license key to your Millau instance removes debugging information from HTTP traffic. You can get the license free of charge in a minute at https://millau.net/license and add it as follows:
 
- ```
+ ```dockerfile
  services:
    proxy:
      image: codelev/millau:latest
